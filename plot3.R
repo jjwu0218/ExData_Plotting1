@@ -1,0 +1,20 @@
+plot3<-function(file="household_power_consumption.txt"){
+  #read two-day data
+  twoday<-read.table(text = grep("^[1,2]/2/2007",readLines(file), value = TRUE), 
+                     col.names = c("Date", "Time", "Global_active_power", "Global_reactive_power", "Voltage", "Global_intensity", "Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+                     sep = ";", header = TRUE)
+  
+  #convert the format of date and time
+  date_time<-paste(as.Date(twoday$Date,"%d/%m/%Y"),twoday$Time)
+  twoday$date_time<-as.POSIXct(date_time)
+  
+  #plot3
+  #I had trouble placing the legend in the right place when I used 'dev.copy'.So I plot it directly to png.
+  png("plot3.png",480,480)
+  plot(twoday$Sub_metering_1~twoday$date_time,xlab="",ylab="Energy sub metering",type="n")
+  lines(twoday$Sub_metering_1~twoday$date_time,col="black")
+  lines(twoday$Sub_metering_2~twoday$date_time,col="red")
+  lines(twoday$Sub_metering_3~twoday$date_time,col="blue")
+  legend("topright",cex=1,col=c("black","red","blue"),lty=1,lwd=1,seg.len=1.5,legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"))
+  dev.off()
+}
